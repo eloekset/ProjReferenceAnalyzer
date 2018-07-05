@@ -1,0 +1,12 @@
+﻿Example usage for T4 Docopt.NET
+
+Usage:
+  projrefs find <path> [--include-assembly-references]
+
+  <path> can be a folder, a solution file or a project file.
+
+Options:
+ -o           Short switch.
+ -s=<arg>     Short option with arg.
+ --long=ARG   Long option with arg.
+ --switch     Long switch.
