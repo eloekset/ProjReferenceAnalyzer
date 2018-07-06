@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -29,7 +30,7 @@ namespace ProjReferenceAnalyzer.Services
             return new SolutionInfo
             {
                 SolutionFile = solutionFile,
-                Projects = GetProjects(solutionFile)
+                Projects = GetProjects(solutionFile).ToList()
             };
         }
 

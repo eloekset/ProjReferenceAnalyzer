@@ -6,6 +6,6 @@ namespace ProjReferenceAnalyzer.Core
     public class SolutionInfo
     {
         public FileInfo SolutionFile { get; set; }
-        public IEnumerable<ProjectInfo> Projects { get; set; } = new List<ProjectInfo>();
+        public IList<ProjectInfo> Projects { get; set; } = new List<ProjectInfo>();
     }
 }

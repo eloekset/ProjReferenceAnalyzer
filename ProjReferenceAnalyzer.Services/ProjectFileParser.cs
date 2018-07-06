@@ -10,14 +10,16 @@ namespace ProjReferenceAnalyzer.Services
 {
     public class ProjectFileParser : IProjectFileParser
     {
-        public void FindDependenciesForProject(ProjectInfo project)
+        public const string OldStyleProjectXmlNamespace = @"http://schemas.microsoft.com/developer/msbuild/2003";
+
+        public void FindDependenciesForProject(ProjectInfo project, IEnumerable<ProjectInfo> allProjects)
         {
             if (project == null) throw new ArgumentNullException(nameof(project));
             if (project.ProjectFile == null) throw new ArgumentException("ProjectFile property must be specified in order to parse the content and find dependencies.", nameof(project));
             if (!project.ProjectFile.Exists) throw new FileNotFoundException("Project file not found.", project.ProjectFile.FullName);
             string projectContent = File.ReadAllText(project.ProjectFile.FullName);
             string packagesConfigContent = GetContentOfProjectPackagesConfig(project);
-            FindDependenciesForProject(project, projectContent, packagesConfigContent);
+            FindDependenciesForProject(project, allProjects, projectContent, packagesConfigContent);
         }
 
         public string GetContentOfProjectPackagesConfig(ProjectInfo project)
@@ -35,12 +37,39 @@ namespace ProjReferenceAnalyzer.Services
             return null;
         }
 
-        public void FindDependenciesForProject(ProjectInfo project, string projectContent, string packagesConfigContent)
+        public void FindDependenciesForProject(ProjectInfo project, IEnumerable<ProjectInfo> allProjects, string projectContent, string packagesConfigContent)
         {
             var projectXml = XDocument.Parse(projectContent);
             var packagesConfigXml = !string.IsNullOrWhiteSpace(packagesConfigContent) ? XDocument.Parse(packagesConfigContent) : null;
 
             FindNuGetDependenciesForProject(project, projectXml, packagesConfigXml);
+            FindProjectReferenceDependenciesForProject(project, allProjects, projectXml);
+        }
+
+        public void FindProjectReferenceDependenciesForProject(ProjectInfo project, IEnumerable<ProjectInfo> allProjects, XDocument projectXml)
+        {
+            // Old style .NET Framework projects
+            var projectReferencePaths = projectXml.Descendants(XName.Get("ProjectReference", OldStyleProjectXmlNamespace))
+                .Attributes(XName.Get("Include"))
+                .Select(a => a.Value);
+
+            if (projectReferencePaths.Count() == 0)
+            {
+                // .NET Standard and .NET Core projects
+                projectReferencePaths = projectXml
+                    .Descendants(XName.Get("ProjectReference"))
+                    .Attributes(XName.Get("Include"))
+                    .Select(a => a.Value);
+            }
+
+            foreach (var projectReferencePath in projectReferencePaths)
+            {
+                
+                project.Dependencies.Add(new ProjectReference
+                {
+                    Project = allProjects.FirstOrDefault(pi => new FileInfo(pi.ProjectFile.FullName).AbsolutePath().Equals(new FileInfo(Path.Combine(project.ProjectFile.Directory.FullName + Path.DirectorySeparatorChar, projectReferencePath)).AbsolutePath()))
+                });
+            }
         }
 
         public void FindNuGetDependenciesForProject(ProjectInfo project, XDocument projectXml, XDocument packagesConfigXml)

@@ -49,11 +49,13 @@ namespace ProjReferenceAnalyzer.Console
                             solutions.Add(solutionParser.GetSolutionInfo(solutionFile));
                         }
 
+                        RemoveDuplicateProjects(solutions);
+
                         var projects = solutions.SelectMany(si => si.Projects);
 
                         foreach (var project in projects)
                         {
-                            projectParser.FindDependenciesForProject(project);
+                            projectParser.FindDependenciesForProject(project, projects);
                         }
 
                         System.Console.WriteLine($"Found {solutions.Count} solutions");
@@ -64,6 +66,52 @@ namespace ProjReferenceAnalyzer.Console
             }
 
             System.Console.ReadKey();
+        }
+
+        private static void RemoveDuplicateProjects(List<SolutionInfo> solutions)
+        {
+            var duplicateProjects = new Dictionary<string, List<ProjectInfo>>();
+            var projects = solutions.SelectMany(si => si.Projects);
+
+            foreach (var project in projects)
+            {
+                List<ProjectInfo> listOfDuplicates = null;
+
+                if (duplicateProjects.ContainsKey(project.ProjectFile.FullName))
+                {
+                    listOfDuplicates = duplicateProjects[project.ProjectFile.FullName];
+                }
+                else
+                {
+                    listOfDuplicates = new List<ProjectInfo>();
+                    duplicateProjects.Add(project.ProjectFile.FullName, listOfDuplicates);
+                }
+
+                listOfDuplicates.Add(project);
+            }
+
+            foreach (var projectPath in duplicateProjects.Keys)
+            {
+                if (duplicateProjects[projectPath].Count > 1)
+                {
+                    // All solutions should share the same instance of an individual project
+                    var projectToKeep = duplicateProjects[projectPath].First();
+                    var solutionsWithCurrentProject = solutions.FindAll(si => si.Projects.Any(pi => pi.ProjectFile.FullName == projectPath));
+                    foreach (var solution in solutionsWithCurrentProject)
+                    {
+                        for (int index = solution.Projects.Count() - 1; index > 0; index--)
+                        {
+                            var projectToTest = solution.Projects.ElementAt(index);
+
+                            if (projectToTest.ProjectFile.FullName == projectToKeep.ProjectFile.FullName && object.ReferenceEquals(projectToTest, projectToKeep))
+                            {
+                                solution.Projects.Remove(projectToTest);
+                                solution.Projects.Add(projectToKeep);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
