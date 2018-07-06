@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ProjReferenceAnalyzer.Services.Tests
 {
@@ -6,6 +7,8 @@ namespace ProjReferenceAnalyzer.Services.Tests
     {
         public const string VisualStudioSolutionProjectGuid = "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC";
         public const string KnownSolutionPath = @"C:\GitHub\ProjReferenceAnalyzer\";
+        public const string KnownTestsProjectName = @"ProjReferenceAnalyzer.Services.Tests";
+        public const string KnownTestsProjectPath = @"ProjReferenceAnalyzer.Services.Tests\ProjReferenceAnalyzer.Serivces.Tests.csproj";
         public const string KnownConsoleProjectName = @"ProjReferenceAnalyzer.Console";
         public const string KnownConsoleProjectPath = @"ProjReferenceAnalyzer.Console\ProjReferenceAnalyzer.Console.csproj";
         public const string KnownConsoleProjectGuid = "25910DBF-4A93-4283-ADA6-83A17A288FF3";
@@ -20,6 +23,16 @@ namespace ProjReferenceAnalyzer.Services.Tests
         public static string GetSolutionFileContent()
         {
             return ReadStringContentOfResourceFile(Properties.Resources.ProjReferenceAnalyzer);
+        }
+
+        public static string GetNetStandardProjectFileContent()
+        {
+            return Properties.Resources.ProjReferenceAnalyzer_Services_Tests;
+        }
+
+        public static string GetPackagesConfigFileContent()
+        {
+            return Properties.Resources.packages;
         }
 
         private static string ReadStringContentOfResourceFile(byte[] data)
