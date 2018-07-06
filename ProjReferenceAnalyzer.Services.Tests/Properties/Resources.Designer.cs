@@ -61,12 +61,45 @@ namespace ProjReferenceAnalyzer.Services.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;packages&gt;
+        ///  This represents NuGet references in an old style csproj.
+        /// </summary>
+        internal static string packages {
+            get {
+                return ResourceManager.GetString("packages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] ProjReferenceAnalyzer {
             get {
                 object obj = ResourceManager.GetObject("ProjReferenceAnalyzer", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+        ///
+        ///  &lt;PropertyGroup&gt;
+        ///    &lt;TargetFramework&gt;netcoreapp2.1&lt;/TargetFramework&gt;
+        ///
+        ///    &lt;IsPackable&gt;false&lt;/IsPackable&gt;
+        ///  &lt;/PropertyGroup&gt;
+        ///
+        ///  &lt;ItemGroup&gt;
+        ///    &lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;15.7.0&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;Shouldly&quot; Version=&quot;3.0.0&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;xunit&quot; Version=&quot;2.3.1&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;xunit.runner.visualstudio&quot; Version=&quot;2.3.1&quot; /&gt;
+        ///    &lt;DotNetCliToolReference Include=&quot;dotnet-xunit&quot; Ver [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ProjReferenceAnalyzer_Services_Tests {
+            get {
+                return ResourceManager.GetString("ProjReferenceAnalyzer_Services_Tests", resourceCulture);
             }
         }
     }

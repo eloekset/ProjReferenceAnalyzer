@@ -10,6 +10,7 @@ namespace ProjReferenceAnalyzer.Console.Startup
         {
             var services = new ServiceCollection();
             services.AddSingleton<ISolutionFileParser, SolutionFileParser>();
+            services.AddSingleton<IProjectFileParser, ProjectFileParser>();
 
             return services.BuildServiceProvider();
         }

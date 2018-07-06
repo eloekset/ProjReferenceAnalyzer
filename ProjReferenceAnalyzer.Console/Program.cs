@@ -40,6 +40,7 @@ namespace ProjReferenceAnalyzer.Console
                     if (folder.Exists)
                     {
                         var solutionParser = serviceProvider.GetService<ISolutionFileParser>();
+                        var projectParser = serviceProvider.GetService<IProjectFileParser>();
                         List<SolutionInfo> solutions = new List<SolutionInfo>();
                         var solutionFiles = folder.GetFiles("*.sln", SearchOption.AllDirectories);
 
@@ -48,8 +49,16 @@ namespace ProjReferenceAnalyzer.Console
                             solutions.Add(solutionParser.GetSolutionInfo(solutionFile));
                         }
 
+                        var projects = solutions.SelectMany(si => si.Projects);
+
+                        foreach (var project in projects)
+                        {
+                            projectParser.FindDependenciesForProject(project);
+                        }
+
                         System.Console.WriteLine($"Found {solutions.Count} solutions");
-                        System.Console.WriteLine($"Found {solutions.Sum(si => si.Projects.Count())} projects");
+                        System.Console.WriteLine($"Found {projects.Count()} projects");
+                        System.Console.WriteLine($"Found {projects.Sum(pi => pi.Dependencies.Count)} dependencies");
                     }
                 }
             }
