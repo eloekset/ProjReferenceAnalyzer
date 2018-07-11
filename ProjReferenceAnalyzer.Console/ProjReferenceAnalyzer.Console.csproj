@@ -43,6 +43,9 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -83,9 +86,17 @@
       <Project>{3B6CD151-3DEE-4913-9CEC-8C36C8D3A763}</Project>
       <Name>ProjReferenceAnalyzer.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ProjReferenceAnalyzer.SerializationFormat.Json\ProjReferenceAnalyzer.SerializationFormat.Json.csproj">
+      <Project>{4460dc7f-c3cf-45d0-b89a-eb2b1f617eb9}</Project>
+      <Name>ProjReferenceAnalyzer.SerializationFormat.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProjReferenceAnalyzer.Services\ProjReferenceAnalyzer.Services.csproj">
       <Project>{235427A3-68CF-43B3-852E-067092D45896}</Project>
       <Name>ProjReferenceAnalyzer.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProjReferenceAnalyzer.Storage.LocalFileSystem\ProjReferenceAnalyzer.Storage.LocalFileSystem.csproj">
+      <Project>{562b37e9-1d23-4b38-b985-5ca166a9969e}</Project>
+      <Name>ProjReferenceAnalyzer.Storage.LocalFileSystem</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
