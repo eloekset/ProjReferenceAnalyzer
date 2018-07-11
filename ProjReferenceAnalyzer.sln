@@ -5,11 +5,17 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.Console", "ProjReferenceAnalyzer.Console\ProjReferenceAnalyzer.Console.csproj", "{25910DBF-4A93-4283-ADA6-83A17A288FF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.Services", "ProjReferenceAnalyzer.Services\ProjReferenceAnalyzer.Services.csproj", "{235427A3-68CF-43B3-852E-067092D45896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjReferenceAnalyzer.Services", "ProjReferenceAnalyzer.Services\ProjReferenceAnalyzer.Services.csproj", "{235427A3-68CF-43B3-852E-067092D45896}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.Core", "ProjReferenceAnalyzer.Core\ProjReferenceAnalyzer.Core.csproj", "{3B6CD151-3DEE-4913-9CEC-8C36C8D3A763}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjReferenceAnalyzer.Core", "ProjReferenceAnalyzer.Core\ProjReferenceAnalyzer.Core.csproj", "{3B6CD151-3DEE-4913-9CEC-8C36C8D3A763}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjReferenceAnalyzer.Services.Tests", "ProjReferenceAnalyzer.Services.Tests\ProjReferenceAnalyzer.Services.Tests.csproj", "{A1C36660-C1E3-4913-BA8B-190A179100C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.Storage.LocalFileSystem", "ProjReferenceAnalyzer.Storage.LocalFileSystem\ProjReferenceAnalyzer.Storage.LocalFileSystem.csproj", "{562B37E9-1D23-4B38-B985-5CA166A9969E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.SerializationFormat.Json", "ProjReferenceAnalyzer.SerializationFormat.Json\ProjReferenceAnalyzer.SerializationFormat.Json.csproj", "{4460DC7F-C3CF-45D0-B89A-EB2B1F617EB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.SerializtionFormat.Dot", "ProjReferenceAnalyzer.SerializtionFormat.Dot\ProjReferenceAnalyzer.SerializtionFormat.Dot.csproj", "{734A0835-13BC-4E7C-9DA5-08008B0CC84B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +39,18 @@ Global
 		{A1C36660-C1E3-4913-BA8B-190A179100C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1C36660-C1E3-4913-BA8B-190A179100C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1C36660-C1E3-4913-BA8B-190A179100C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{562B37E9-1D23-4B38-B985-5CA166A9969E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{562B37E9-1D23-4B38-B985-5CA166A9969E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{562B37E9-1D23-4B38-B985-5CA166A9969E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{562B37E9-1D23-4B38-B985-5CA166A9969E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4460DC7F-C3CF-45D0-B89A-EB2B1F617EB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4460DC7F-C3CF-45D0-B89A-EB2B1F617EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4460DC7F-C3CF-45D0-B89A-EB2B1F617EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4460DC7F-C3CF-45D0-B89A-EB2B1F617EB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{734A0835-13BC-4E7C-9DA5-08008B0CC84B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{734A0835-13BC-4E7C-9DA5-08008B0CC84B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{734A0835-13BC-4E7C-9DA5-08008B0CC84B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{734A0835-13BC-4E7C-9DA5-08008B0CC84B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
