@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import {
   VisNode,
   VisNodes,
@@ -18,11 +18,13 @@ class ExampleNetworkData implements VisNetworkData {
   styleUrls: ['./visnetwork.component.css']
 })
 export class VisnetworkComponent implements OnInit, OnDestroy {
+  @ViewChild('fileImportInput')
+  fileImportInput: any;
   public visNetwork: string = 'networkId1';
   public visNetworkData: ExampleNetworkData;
   public visNetworkOptions: VisNetworkOptions;
 
-  public constructor(private visNetworkService: VisNetworkService) { }
+  public constructor(private visNetworkService: VisNetworkService) {  }
 
   public addNode(): void {
     const newId = this.visNetworkData.nodes.getLength() + 1;
@@ -43,7 +45,32 @@ public networkInitialized(): void {
         });
 }
 
+// METHOD CALLED WHEN CSV FILE IS IMPORTED
+fileChangeListener($event): void {
+  var text = [];
+  var target = $event.target || $event.srcElement;
+  var files = target.files; 
+  var input = $event.target;
+  var reader = new FileReader();
+  var self = this;
+
+  reader.onload = (data) => {
+    let dotData = {
+      dot: reader.result
+    };
+    self.visNetworkService.setData(self.visNetwork, <any>dotData);
+  }
+
+  reader.onerror = function () {
+    alert('Unable to read ' + input.files[0]);
+  };
+
+  reader.readAsText(input.files[0]);
+};
+
   ngOnInit() {
+    var file = new FileReader();
+
     const nodes = new VisNodes([
       { id: '1', label: 'Node 1' },
       { id: '2', label: 'Node 2' },
