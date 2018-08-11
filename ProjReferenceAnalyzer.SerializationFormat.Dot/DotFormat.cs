@@ -28,19 +28,19 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
 
             ProjectNode GetOrAddProjectNode(ProjectInfo project)
             {
-                ProjectNode projectNode = null;
-                string projectNodeKey = project.ProjectFile.FullName;
+                    ProjectNode projectNode = null;
+                    string projectNodeKey = project.ProjectFile.FullName;
 
-                if (projectNodes.ContainsKey(projectNodeKey))
-                {
-                    projectNode = projectNodes[projectNodeKey];
-                }
-                else
-                {
-                    projectNode = new ProjectNode(project);
-                    projectNodes.Add(projectNodeKey, projectNode);
-                    graph.AddVertex(projectNode);
-                }
+                    if (projectNodes.ContainsKey(projectNodeKey))
+                    {
+                        projectNode = projectNodes[projectNodeKey];
+                    }
+                    else
+                    {
+                        projectNode = new ProjectNode(project);
+                        projectNodes.Add(projectNodeKey, projectNode);
+                        graph.AddVertex(projectNode);
+                    }
 
                 return projectNode;
             }
@@ -127,8 +127,8 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
                             {
                                 ProjectNode dependencyProjectNode = GetOrAddProjectNode(dependencyProject);
                                 graph.AddEdge(new NodeLink(projectNode, dependencyProjectNode));
-                            }
-                        }
+                }
+            }
                         else if (dependency is NuGetReference)
                         {
                             NuGetPackageInfo nugetPackage = ((NuGetReference)dependency).NuGetPackage;
