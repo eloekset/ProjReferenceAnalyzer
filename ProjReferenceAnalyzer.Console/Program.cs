@@ -63,7 +63,7 @@ namespace ProjReferenceAnalyzer.Console
                         System.Console.WriteLine($"Found {projects.Sum(pi => pi.Dependencies.Count)} dependencies");
                         IGraphStorage graphStorage = serviceProvider.GetService<IGraphStorage>();
                         graphStorage.SerializationFormat = serviceProvider.GetService<IGraphSerializationFormat>();
-                        graphStorage.Store(@"C:\Rot\TestProjectAnalyzer.json", solutions);
+                        graphStorage.Store(@"C:\Rot\TestProjectAnalyzer.gv", solutions);
                     }
                 }
             }
