@@ -46,6 +46,21 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="QuickGraph.All, Version=3.6.61119.8, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraph.All.3.6.61119.8\lib\net40\QuickGraph.All.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Core, Version=3.6.61119.8, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraph.All.3.6.61119.8\lib\net40\QuickGraph.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data, Version=3.6.61119.8, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraph.All.3.6.61119.8\lib\net40\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.6.61119.8, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraph.All.3.6.61119.8\lib\net40\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization, Version=3.6.61119.8, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraph.All.3.6.61119.8\lib\net40\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -85,6 +100,10 @@
     <ProjectReference Include="..\ProjReferenceAnalyzer.Core\ProjReferenceAnalyzer.Core.csproj">
       <Project>{3B6CD151-3DEE-4913-9CEC-8C36C8D3A763}</Project>
       <Name>ProjReferenceAnalyzer.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProjReferenceAnalyzer.SerializationFormat.Dot\ProjReferenceAnalyzer.SerializationFormat.Dot.csproj">
+      <Project>{6F05098D-FE92-47A4-86EE-F83A510E818B}</Project>
+      <Name>ProjReferenceAnalyzer.SerializationFormat.Dot</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjReferenceAnalyzer.SerializationFormat.Json\ProjReferenceAnalyzer.SerializationFormat.Json.csproj">
       <Project>{4460dc7f-c3cf-45d0-b89a-eb2b1f617eb9}</Project>

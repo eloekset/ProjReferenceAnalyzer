@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QuickGraph.All" Version="3.6.61119.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProjReferenceAnalyzer.Core\ProjReferenceAnalyzer.Core.csproj" />
+  </ItemGroup>
+
+</Project>
