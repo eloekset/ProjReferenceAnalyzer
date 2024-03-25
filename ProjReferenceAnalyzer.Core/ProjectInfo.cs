@@ -8,6 +8,7 @@ namespace ProjReferenceAnalyzer.Core
     {
         public Guid ProjectGuid { get; set; }
         public FileInfo ProjectFile { get; set; }
+        public bool ProjectFileExists { get; set; }
         public string Name => ProjectFile != null ? ProjectFile.Name.Substring(0, (ProjectFile.Name.Length - ProjectFile.Extension.Length)) : string.Empty;
         public ICollection<Dependency> Dependencies { get; } = new List<Dependency>();
     }

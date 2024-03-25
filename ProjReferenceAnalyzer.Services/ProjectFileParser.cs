@@ -1,10 +1,9 @@
-﻿using System;
+﻿using ProjReferenceAnalyzer.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
-using ProjReferenceAnalyzer.Core;
 
 namespace ProjReferenceAnalyzer.Services
 {
@@ -16,23 +15,36 @@ namespace ProjReferenceAnalyzer.Services
         {
             if (project == null) throw new ArgumentNullException(nameof(project));
             if (project.ProjectFile == null) throw new ArgumentException("ProjectFile property must be specified in order to parse the content and find dependencies.", nameof(project));
-            if (!project.ProjectFile.Exists) throw new FileNotFoundException("Project file not found.", project.ProjectFile.FullName);
-            string projectContent = File.ReadAllText(project.ProjectFile.FullName);
-            string packagesConfigContent = GetContentOfProjectPackagesConfig(project);
-            FindDependenciesForProject(project, allProjects, projectContent, packagesConfigContent);
+            if (project.ProjectFile.Exists)
+            {
+                project.ProjectFileExists = true;
+                string projectContent = File.ReadAllText(project.ProjectFile.FullName);
+                string packagesConfigContent = GetContentOfProjectPackagesConfig(project);
+                FindDependenciesForProject(project, allProjects, projectContent, packagesConfigContent);
+            }
+            /*else
+            {
+                throw new FileNotFoundException("Project file not found.", project.ProjectFile.FullName);
+            }*/
         }
 
         public string GetContentOfProjectPackagesConfig(ProjectInfo project)
         {
             if (project == null) throw new ArgumentNullException(nameof(project));
             if (project.ProjectFile == null) throw new ArgumentException("ProjectFile property must be specified in order to parse the content and find dependencies.", nameof(project));
-            if (!project.ProjectFile.Exists) throw new FileNotFoundException("Project file not found.", project.ProjectFile.FullName);
-            var packagesConfigFile = project.ProjectFile.Directory.GetFiles("packages.config").FirstOrDefault();
-
-            if (packagesConfigFile != null)
+            if (project.ProjectFile.Exists)
             {
-                return File.ReadAllText(packagesConfigFile.FullName);
+                var packagesConfigFile = project.ProjectFile.Directory.GetFiles("packages.config").FirstOrDefault();
+
+                if (packagesConfigFile != null)
+                {
+                    return File.ReadAllText(packagesConfigFile.FullName);
+                }
             }
+            /*else
+            {
+                throw new FileNotFoundException("Project file not found.", project.ProjectFile.FullName);
+            }*/
 
             return null;
         }
