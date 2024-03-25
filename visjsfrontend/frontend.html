@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Network</title>
+    <script type="text/javascript"
+            src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style type="text/css">
+        #mynetwork {
+            width: 1024px;
+            height: 1024px;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select DOT file to visualize</h1>
+    <input type="file" id="dotfile" />
+    <div id="mynetwork"></div>
+    <script type="text/javascript">
+        // create an array with nodes
+        var nodes = new vis.DataSet([
+        { id: 1, label: "Node 1" },
+        { id: 2, label: "Node 2" },
+        { id: 3, label: "Node 3" },
+        { id: 4, label: "Node 4" },
+        { id: 5, label: "Node 5" },
+        ]);
+
+        // create an array with edges
+        var edges = new vis.DataSet([
+        { from: 1, to: 3 },
+        { from: 1, to: 2 },
+        { from: 2, to: 4 },
+        { from: 2, to: 5 },
+        { from: 3, to: 3 },
+        ]);
+
+        // create a network
+        var container = document.getElementById("mynetwork");
+        var data = {
+        nodes: nodes,
+        edges: edges,
+        };
+        var options = {
+            layout: {
+                improvedLayout: false
+            }
+        };
+
+        function changeNodeValues(currentValue, index, array) {
+            if (currentValue.URL !== undefined) {
+                currentValue.image = currentValue.URL;
+                currentValue.URL = undefined;
+                currentValue.shape = "image";
+            }
+            if (currentValue.shape === "hexagon") {
+                currentValue.image = "./SLNFile.png";
+                currentValue.shape = "image";
+            }
+        }
+
+        var input = document.getElementById('dotfile');
+        input.onchange = e => {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.readAsText(file, 'UTF-8');
+            reader.onload = readerEvent => {
+                const content = readerEvent.target.result;
+                const dotData = vis.networkDOTParser.DOTToGraph(content);
+                dotData.nodes.forEach(changeNodeValues);
+                const network = new vis.Network(container, dotData, options);
+            }
+        }
+
+        input.click();
+    </script>
+</body>
+</html>
