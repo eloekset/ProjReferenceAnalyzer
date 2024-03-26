@@ -24,11 +24,11 @@ digraph G {
 22 [label="System.Data", image="./GACFile.png"];
 23 [label="System.Net.Http", image="./GACFile.png"];
 24 [label="System.Xml", image="./GACFile.png"];
-25 [label="Microsoft.NET.Test.Sdk", image="NuGet.png"];
-26 [label="Shouldly", image="NuGet.png"];
-27 [label="xunit", image="NuGet.png"];
-28 [label="xunit.runner.visualstudio", image="NuGet.png"];
-29 [label="dotnet-xunit", image="NuGet.png"];
+25 [label="Microsoft.NET.Test.Sdk", image="./NuGet.png"];
+26 [label="Shouldly", image="./NuGet.png"];
+27 [label="xunit", image="./NuGet.png"];
+28 [label="xunit.runner.visualstudio", image="./NuGet.png"];
+29 [label="dotnet-xunit", image="./NuGet.png"];
 0 -> 1 [ style="bold"];
 0 -> 2 [ style="bold"];
 0 -> 3 [ style="bold"];
