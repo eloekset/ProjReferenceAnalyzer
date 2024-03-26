@@ -22,6 +22,85 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
         {
             var graph = new QuickGraph.AdjacencyGraph<Node, NodeLink>();
             var projectNodes = new Dictionary<string, ProjectNode>();
+            var nugetNodes = new Dictionary<string, NuGetPackageNode>();
+            var gacNodes = new Dictionary<string, GacNode>();
+            var fileNodes = new Dictionary<string, FileNode>();
+
+            ProjectNode GetOrAddProjectNode(ProjectInfo project)
+            {
+                ProjectNode projectNode = null;
+                string projectNodeKey = project.ProjectFile.FullName;
+
+                if (projectNodes.ContainsKey(projectNodeKey))
+                {
+                    projectNode = projectNodes[projectNodeKey];
+                }
+                else
+                {
+                    projectNode = new ProjectNode(project);
+                    projectNodes.Add(projectNodeKey, projectNode);
+                    graph.AddVertex(projectNode);
+                }
+
+                return projectNode;
+            }
+
+            NuGetPackageNode GetOrAddNuGetNode(NuGetPackageInfo nugetPackage)
+            {
+                NuGetPackageNode nugetNode = null;
+                string nugetNodeKey = $"{nugetPackage.PackageId}_{nugetPackage.Version}";
+
+                if (nugetNodes.ContainsKey(nugetNodeKey))
+                {
+                    nugetNode = nugetNodes[nugetNodeKey];
+                }
+                else
+                {
+                    nugetNode = new NuGetPackageNode(nugetPackage);
+                    nugetNodes.Add(nugetNodeKey, nugetNode);
+                    graph.AddVertex(nugetNode);
+                }
+
+                return nugetNode;
+            }
+
+            GacNode GetOrAddGacNode(GacReference gacReference)
+            {
+                GacNode gacNode = null;
+                string gacKey = gacReference.AssemblyName;
+
+                if (gacNodes.ContainsKey(gacKey))
+                {
+                    gacNode = gacNodes[gacKey];
+                }
+                else
+                {
+                    gacNode = new GacNode(gacReference);
+                    gacNodes.Add(gacKey, gacNode);
+                    graph.AddVertex(gacNode);
+                }
+
+                return gacNode;
+            }
+
+            FileNode GetOrAddFileNode(FileReference fileReference) 
+            {
+                FileNode fileNode = null;
+                string fileKey = fileReference.File.FullName;
+
+                if (fileNodes.ContainsKey(fileKey))
+                {
+                    fileNode = fileNodes[fileKey];
+                }
+                else
+                {
+                    fileNode = new FileNode(fileReference);
+                    fileNodes.Add(fileKey, fileNode);
+                    graph.AddVertex(fileNode);
+                }
+
+                return fileNode;
+            }
 
             // 1. Create vertices for each unique dependency, project and solution
             foreach (var solution in solutions)
@@ -31,22 +110,42 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
 
                 foreach (var project in solution.Projects)
                 {
-                    ProjectNode projectNode = null;
-                    string projectNodeKey = project.ProjectFile.FullName;
-
-                    if (projectNodes.ContainsKey(projectNodeKey))
-                    {
-                        projectNode = projectNodes[projectNodeKey];
-                    }
-                    else
-                    {
-                        projectNode = new ProjectNode(project);
-                        projectNodes.Add(projectNodeKey, projectNode);
-                        graph.AddVertex(projectNode);
-                    }
+                    ProjectNode projectNode = GetOrAddProjectNode(project);
 
                     // 2. Create edges between solution and project vertices
                     graph.AddEdge(new NodeLink(solutionNode, projectNode));
+
+                    // 3. Create edges for dependencies
+                    foreach (var dependency in project.Dependencies)
+                    {
+                        if (dependency is ProjectReference)
+                        {
+                            ProjectInfo dependencyProject = ((ProjectReference)dependency).Project;
+
+                            // Some project references are not resolved because project file is missing or just not checked out from source control
+                            if (dependencyProject != null)
+                            {
+                                ProjectNode dependencyProjectNode = GetOrAddProjectNode(dependencyProject);
+                                graph.AddEdge(new NodeLink(projectNode, dependencyProjectNode));
+                            }
+                        }
+                        else if (dependency is NuGetReference)
+                        {
+                            NuGetPackageInfo nugetPackage = ((NuGetReference)dependency).NuGetPackage;
+                            NuGetPackageNode dependencyNuGetNode = GetOrAddNuGetNode(nugetPackage);
+                            graph.AddEdge(new NodeLink(projectNode, dependencyNuGetNode));
+                        }
+                        else if (dependency is GacReference)
+                        {
+                            GacNode dependencyGacNode = GetOrAddGacNode((GacReference)dependency);
+                            graph.AddEdge(new NodeLink(projectNode, dependencyGacNode));
+                        }
+                        else if (dependency is FileReference)
+                        {
+                            FileNode dependencyFileNode = GetOrAddFileNode((FileReference)dependency);
+                            graph.AddEdge(new NodeLink(projectNode, dependencyFileNode));
+                        }
+                    }
                 }
             }
 

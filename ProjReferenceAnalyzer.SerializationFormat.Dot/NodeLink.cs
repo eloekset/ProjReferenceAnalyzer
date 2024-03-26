@@ -33,6 +33,29 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
                     throw new NotImplementedException($"SetDependencyType not implemented for Source type {Source.GetType().Name} and Target type {Target.GetType().Name}");
                 }
             }
+            else if (Source is ProjectNode)
+            {
+                if (Target is ProjectNode)
+                {
+                    DependencyType = "Project";
+                }
+                else if (Target is NuGetPackageNode)
+                {
+                    DependencyType = "NuGet";
+                }
+                else if (Target is GacNode)
+                {
+                    DependencyType = "GAC";
+                }
+                else if (Target is FileNode)
+                {
+                    DependencyType = "DLL";
+                }
+                else
+                {
+                    throw new NotImplementedException($"SetDependencyType not implemented for Source type {Source.GetType().Name} and Target type {Target.GetType().Name}");
+                }
+            }
             else
             {
                 throw new NotImplementedException($"SetDependencyType not implemented for Source type {Source.GetType().Name} and Target type {Target.GetType().Name}");

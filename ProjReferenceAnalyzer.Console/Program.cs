@@ -71,6 +71,7 @@ namespace ProjReferenceAnalyzer.Console
                 }
             }
 
+            System.Console.WriteLine("Press any key to end");
             System.Console.ReadKey();
         }
 
