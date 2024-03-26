@@ -5,74 +5,275 @@
     <script type="text/javascript"
             src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
+        body {
+            font: 10pt sans;
+        }
+        #app {
+            display: grid;
+            gap: 5px;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto 150px 1024px;
+        }
         #mynetwork {
-            width: 1024px;
-            height: 1024px;
             border: 1px solid lightgray;
+            grid-column: 1;
+            grid-row: 2 / 4;
+        }
+        #filter {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        #summary {
+            grid-column: 2;
+            grid-row: 2;
+        }
+        #config {
+            grid-column: 2;
+            grid-row: 3;
         }
     </style>
 </head>
 <body>
-    <h1>Select DOT file to visualize</h1>
-    <input type="file" id="dotfile" />
-    <div id="mynetwork"></div>
+    <div id="app">
+        <div>
+            <h1>Select DOT file to visualize</h1>
+            <input type="file" id="dotfile" />    
+        </div>    
+        <div id="mynetwork"></div>
+        <div id="filter">
+            <h3>Filter</h3>
+            <label for="filter-nuget">NuGet packages</label>
+            <input type="checkbox" id="filter-nuget" />
+            <label for="filter-gac">GAC assemblies</label>
+            <input type="checkbox" id="filter-gac" />
+            <label for="filter-dll">File dependencies</label>
+            <input type="checkbox" id="filter-dll" />
+            <br />
+            <label for="filter-sln">Solutions</label>
+            <select id="filter-sln" multiple>
+            </select>
+        </div>
+        <div id="summary">
+            <h3>Nodes</h3>
+            <div><span>Solutions: </span><span id="solution-count">0</span></div>
+            <div><span>Projects: </span><span id="project-count">0</span></div>
+            <div><span>NuGet packages: </span><span id="nuget-count">0</span></div>
+            <div><span>GAC assemblies: </span><span id="gac-count">0</span></div>
+            <div><span>File dependencies: </span><span id="dll-count">0</span></div>
+            <div><span>Total dependencies: </span><span id="edge-count">0</span></div>
+        </div>
+        <div id="config"></div>        
+    </div>
     <script type="text/javascript">
-        // create an array with nodes
-        var nodes = new vis.DataSet([
-        { id: 1, label: "Node 1" },
-        { id: 2, label: "Node 2" },
-        { id: 3, label: "Node 3" },
-        { id: 4, label: "Node 4" },
-        { id: 5, label: "Node 5" },
-        ]);
-
-        // create an array with edges
-        var edges = new vis.DataSet([
-        { from: 1, to: 3 },
-        { from: 1, to: 2 },
-        { from: 2, to: 4 },
-        { from: 2, to: 5 },
-        { from: 3, to: 3 },
-        ]);
-
-        // create a network
-        var container = document.getElementById("mynetwork");
-        var data = {
-        nodes: nodes,
-        edges: edges,
-        };
         var options = {
             layout: {
                 improvedLayout: false
+            },
+            physics: {
+                enabled: false,
+                stabilization: {
+                    iterations: 500
+                }
+            },
+            configure: {
+                filter: function (option, path) {
+                    if (path.indexOf("physics") !== -1) {
+                        return true;
+                    }
+                    if (path.indexOf("smooth") !== -1 || option === "smooth") {
+                        return true;
+                    }
+                    return false;
+                },
+                container: document.getElementById("config"),
             }
         };
+        var summary = {
+            solutionCount: 0, 
+            projectCount: 0, 
+            nugetCount: 0, 
+            gacCount: 0, 
+            dllCount: 0,
+            edgeCount: 0
+        };
+        var fileContent = '';
+        var dotData = {};
 
-        function changeNodeValues(currentValue, index, array) {
-            if (currentValue.URL !== undefined) {
-                currentValue.image = currentValue.URL;
-                currentValue.URL = undefined;
-                currentValue.shape = "image";
-            }
-            if (currentValue.shape === "hexagon") {
-                currentValue.image = "./SLNFile.png";
-                currentValue.shape = "image";
-            }
+        function draw(drawData) {
+            // update summary
+            document.getElementById('solution-count').innerText = summary.solutionCount;
+            document.getElementById('project-count').innerText = summary.projectCount;
+            document.getElementById('nuget-count').innerText = summary.nugetCount;
+            document.getElementById('gac-count').innerText = summary.gacCount;
+            document.getElementById('dll-count').innerText = summary.dllCount;
+            document.getElementById('edge-count').innerText = summary.edgeCount;
+            // create a network
+            var container = document.getElementById("mynetwork");
+            var data = drawData || {
+                nodes: [],
+                edges: [],
+            };
+            document.getElementById('config').innerHTML = undefined;
+            const network = new vis.Network(container, data, options);
         }
 
-        var input = document.getElementById('dotfile');
-        input.onchange = e => {
+        function loadSolutions() {
+            dotData = vis.networkDOTParser.DOTToGraph(fileContent);
+            let optionsHtml = '';
+            dotData.nodes
+                    .filter(n => n.image === './SLNFile.png')
+                    .sort(n => n.label)
+                    .forEach(n => optionsHtml += `<option value='${n.label}' selected='true'>${n.label}</option>`);
+            document.getElementById('filter-sln').innerHTML = optionsHtml;
+        }
+
+        function changeNodeValues(currentValue, index, array) {
+
+        }
+
+        function filterBySolutions() {
+            // Find solutions nodes with names matching those selected
+            const includedSolutions = [];
+            const slnElement = document.getElementById('filter-sln');
+            for (var i = 0; i < slnElement.options.length; i++) {
+                let option = slnElement.options[i];
+                if (option.selected) {
+                    includedSolutions.push(option.text);
+                }
+            }
+
+            const filteredData = vis.networkDOTParser.DOTToGraph(fileContent);
+            const excludedSolutionNodeIds = [];
+            const excludedNodes = [];
+            const excludedEdges = [];
+
+            // Exclude all solution nodes not selected
+            for (const node of filteredData.nodes) {
+                if (node.image === './SLNFile.png' && includedSolutions.find(n => n === node.label) !== undefined) {
+                    excludedSolutionNodeIds.push(node.id);
+                    excludedNodes.push(node);
+                }
+            }
+
+            // Exclude all edges from excluded nodes
+            for (const edge of filteredData.edges) {
+                if (excludedNodes.find(n => n.id === edge.from) !== undefined) {
+                    excludedEdges.push(edge);
+                }
+            }
+
+            // Exclude all project nodes pointed to by excluded edges
+            for (const node of filteredData.nodes) {
+                if ((node.image === './CSProj.png' || node.image === './BTProj.png') && excludedEdges.find(e => e.to === node.id)) {
+                    excludedNodes.push(node);
+                }
+            }
+
+            // TODO: Recursivly remove edges and nodes...
+
+            // Remove nodes that are excluded
+/*             for (const node of excludedNodes) {
+                const indexToRemove = filteredData.nodes.findIndex(n => n.id === node.id);
+                filteredData.nodes.splice(indexToRemove);
+            }
+
+            // Remove edges that are exluded
+            for (const edge of excludedEdges) {
+                const indexToRemove = filteredData.edges.findIndex(e => e.from === edge.from && e.to === edge.to);
+                filteredData.edges.splice(indexToRemove);
+            } */
+
+            return filteredData;
+        }
+
+        function filterNodes() {
+            const filteredData = filterBySolutions();
+            //filteredData.nodes.forEach(changeNodeValues);
+            const includeNuGet = document.getElementById('filter-nuget').checked;
+            const includeGac = document.getElementById('filter-gac').checked;
+            const includeDll = document.getElementById('filter-dll').checked;
+            const excludedNodes = [];
+
+            if (includeNuGet === false) {
+                filteredData.nodes
+                    .filter(n => n.image === './NuGet.png')
+                    .forEach(n => excludedNodes.push(n));
+            }
+
+            if (includeGac === false) {
+                filteredData.nodes
+                    .filter(n => n.image === './GACFile.png')
+                    .forEach(n => excludedNodes.push(n));
+            }
+
+            if (includeDll === false) {
+                filteredData.nodes
+                    .filter(n => n.image === './DLLFile.png')
+                    .forEach(n => excludedNodes.push(n));
+            }
+
+            summary.solutionCount = 0;
+            summary.projectCount = 0;
+            summary.nugetCount = 0;
+            summary.gacCount = 0;
+            summary.dllCount = 0;
+            summary.edgeCount = 0;
+            const includedNodes = [];
+            const includedEdges = [];
+            for (const node of filteredData.nodes) {
+                if (excludedNodes.find(n => n.id === node.id) === undefined) {
+                    if (node.image === './SLNFile.png') {
+                        summary.solutionCount++;
+                    } else if (node.image === './CSProj.png' || node.image === './BTProj.png') {
+                        summary.projectCount++;
+                    } else if (node.image === './NuGet.png') {
+                        summary.nugetCount++;
+                    } else if (node.image === './GACFile.png') {
+                        summary.gacCount++;
+                    } else if (node.image === './DLLFile.png') {
+                        summar.dllCount++;
+                    }
+                    includedNodes.push(node);
+                }
+            }
+            for (const edge of filteredData.edges) {
+                if (excludedNodes.find(n => n.id === edge.from || n.id === edge.to) === undefined) {
+                    includedEdges.push(edge);
+                }
+            }
+            
+            filteredData.nodes = includedNodes;
+            filteredData.edges = includedEdges;
+            summary.edgeCount = includedEdges.length;
+            draw(filteredData);
+        }
+
+        var fileInput = document.getElementById('dotfile');
+        fileInput.onchange = e => {
             var file = e.target.files[0];
             var reader = new FileReader();
             reader.readAsText(file, 'UTF-8');
             reader.onload = readerEvent => {
-                const content = readerEvent.target.result;
-                const dotData = vis.networkDOTParser.DOTToGraph(content);
-                dotData.nodes.forEach(changeNodeValues);
-                const network = new vis.Network(container, dotData, options);
+                fileContent = readerEvent.target.result;
+                loadSolutions();
+                filterNodes();
             }
         }
 
-        input.click();
+        // Filter nodes
+        document.getElementById('filter-nuget').onchange = e => {
+            filterNodes();
+        }
+        document.getElementById('filter-gac').onchange = e => {
+            filterNodes();
+        }
+        document.getElementById('filter-dll').onchange = e => {
+            filterNodes();
+        }
+        document.getElementById('filter-sln').onchange = e => {
+            filterNodes();
+        }
+
     </script>
 </body>
 </html>
