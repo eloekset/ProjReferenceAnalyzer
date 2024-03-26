@@ -7,6 +7,7 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
         public SolutionNode(SolutionInfo solutionInfo)
         {
             this.Name = solutionInfo.SolutionFile.Name;
+            this.Image = "./SLNFile.png";
         }
     }
 }

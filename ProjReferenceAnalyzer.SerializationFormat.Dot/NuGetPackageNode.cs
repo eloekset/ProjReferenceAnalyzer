@@ -7,6 +7,7 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
         public NuGetPackageNode(NuGetPackageInfo nuGetPackageInfo)
         {
             this.Name = nuGetPackageInfo.PackageId + "_" + nuGetPackageInfo.Version;
+            this.Image = "./NuGet.png";
         }
     }
 }

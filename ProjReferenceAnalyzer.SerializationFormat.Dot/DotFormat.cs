@@ -1,4 +1,5 @@
 ﻿using ProjReferenceAnalyzer.Core;
+using QuickGraph.Graphviz.Dot;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,11 +52,47 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
 
             // TODO: Add enough information to the Dot data to be able to deserialize back to SolutionInfo, ProjectInfo etc.
             var g = new QuickGraph.Graphviz.GraphvizAlgorithm<Node, NodeLink>(graph);
+            g.FormatEdge += (sender, e) =>
+            {
+                if (e.Edge.Source is SolutionNode)
+                {
+                    e.EdgeFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizEdgeStyle.Bold;
+                }
+                else if (e.Edge.Source is ProjectNode && e.Edge.Target is ProjectNode)
+                {
+                    e.EdgeFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizEdgeStyle.Solid;
+                }
+                else if (e.Edge.Source is ProjectNode && e.Edge.Target is NuGetPackageNode)
+                {
+                    e.EdgeFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizEdgeStyle.Dotted;
+                }
+            };
             g.FormatVertex += (sender, e) =>
             {
-                // This just has to exist to have labels populated
+                if (e.Vertex.Image != null)
+                {
+                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.Unspecified;
+                    e.VertexFormatter.Size = new GraphvizSizeF(20, 20);
+                    e.VertexFormatter.Url = e.Vertex.Image;
+                }
+                else
+                {
+                    if (e.Vertex is SolutionNode)
+                    {
+                        e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.Hexagon;
+                    }
+                    else if (e.Vertex is ProjectNode)
+                    {
+                        e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.Rectangle;
+                    }
+                    else if (e.Vertex is NuGetPackageNode)
+                    {
+                        e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.Record;
+                    }
+                }
             };
             var dot = g.Generate();
+            dot = dot.Replace("URL=\"", "image=\"");
 
             return dot;
         }
