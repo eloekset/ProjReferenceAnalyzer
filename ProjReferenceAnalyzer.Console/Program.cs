@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjReferenceAnalyzer.Console.Startup;
 using ProjReferenceAnalyzer.Core;
+using ProjReferenceAnalyzer.SerializationFormat;
 using ProjReferenceAnalyzer.Services;
 using System.Collections.Generic;
 using System.IO;
@@ -64,7 +65,7 @@ namespace ProjReferenceAnalyzer.Console
                         System.Console.WriteLine($"Found {projects.Sum(pi => pi.Dependencies.Count)} dependencies");
                         IGraphStorage graphStorage = serviceProvider.GetService<IGraphStorage>();
                         graphStorage.SerializationFormat = serviceProvider.GetService<IGraphSerializationFormat>();
-                        string outputFile = DecideOutputFile(args);
+                        string outputFile = DecideOutputFile(args, graphStorage.SerializationFormat);
                         graphStorage.Store(outputFile, solutions);
                         System.Console.WriteLine($"Result written to {outputFile}");
                     }
@@ -75,13 +76,14 @@ namespace ProjReferenceAnalyzer.Console
             System.Console.ReadKey();
         }
 
-        private static string DecideOutputFile(MainArgs args)
+        private static string DecideOutputFile(MainArgs args, IGraphSerializationFormat serializationFormat)
         {
+            string fileExtension = (serializationFormat is JsonFormat) ? ".json" : ".gv";
             FileInfo outputFile = null;
 
             void CreateFileUnderWorkingDirectory()
             {
-                outputFile = new FileInfo(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, "output.json"));
+                outputFile = new FileInfo(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, $"output{fileExtension}"));
             }
 
             if (!string.IsNullOrEmpty(args.ArgOutputPath))
@@ -95,7 +97,7 @@ namespace ProjReferenceAnalyzer.Console
                     try
                     {
                         var outputDir = new DirectoryInfo(args.ArgOutputPath);
-                        outputFile = new FileInfo(Path.Combine(outputDir.FullName, "output.json"));
+                        outputFile = new FileInfo(Path.Combine(outputDir.FullName, $"output{fileExtension}"));
                     }
                     catch 
                     {
@@ -119,7 +121,7 @@ namespace ProjReferenceAnalyzer.Console
                 }
                 else
                 {
-                    outputFile = new FileInfo(Path.Combine(outputFile.Directory.FullName, $"{System.Guid.NewGuid()}.json"));
+                    outputFile = new FileInfo(Path.Combine(outputFile.Directory.FullName, $"{System.Guid.NewGuid()}{fileExtension}"));
                     return outputFile.FullName;
                 }
             }

@@ -15,7 +15,16 @@ namespace ProjReferenceAnalyzer.Console.Startup
             var services = new ServiceCollection();
             services.AddSingleton<ISolutionFileParser, SolutionFileParser>();
             services.AddSingleton<IProjectFileParser, ProjectFileParser>();
-            services.AddSingleton<IGraphSerializationFormat, DotFormat>();
+
+            if (args.OptJson)
+            {
+                services.AddSingleton<IGraphSerializationFormat, JsonFormat>();
+            }
+            else
+            {
+                services.AddSingleton<IGraphSerializationFormat, DotFormat>();
+            }
+            
             services.AddSingleton<IGraphStorage, LocalFileSystemStorage>();
 
             return services.BuildServiceProvider();

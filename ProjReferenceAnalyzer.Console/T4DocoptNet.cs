@@ -11,7 +11,7 @@ namespace ProjReferenceAnalyzer.Console
 		public const string USAGE = @"Example usage for T4 Docopt.NET
 
 Usage:
-  projrefs find <path> [-o <output-path>] [--include-assembly-references]
+  projrefs find <path> [-o <output-path>] [--json] [--include-assembly-references]
 
   <path> can be a folder, a solution file or a project file.
 
@@ -37,6 +37,7 @@ Options:
 		public string ArgPath  { get { return null == _args["<path>"] ? null : _args["<path>"].ToString(); } }
 		public bool OptO { get { return _args["-o"].IsTrue; } }
 		public string ArgOutputPath  { get { return null == _args["<output-path>"] ? null : _args["<output-path>"].ToString(); } }
+		public bool OptJson { get { return _args["--json"].IsTrue; } }
 		public bool OptIncludeAssemblyReferences { get { return _args["--include-assembly-references"].IsTrue; } }
 	
 	}

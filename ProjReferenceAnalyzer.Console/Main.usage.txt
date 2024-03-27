@@ -1,7 +1,7 @@
 ﻿Example usage for T4 Docopt.NET
 
 Usage:
-  projrefs find <path> [-o <output-path>] [--include-assembly-references]
+  projrefs find <path> [-o <output-path>] [--json] [--include-assembly-references]
 
   <path> can be a folder, a solution file or a project file.
 
