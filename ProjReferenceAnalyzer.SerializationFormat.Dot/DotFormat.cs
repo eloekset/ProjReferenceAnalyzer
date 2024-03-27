@@ -127,8 +127,8 @@ namespace ProjReferenceAnalyzer.SerializationFormat.Dot
                             {
                                 ProjectNode dependencyProjectNode = GetOrAddProjectNode(dependencyProject);
                                 graph.AddEdge(new NodeLink(projectNode, dependencyProjectNode));
-                }
-            }
+                            }
+                        }
                         else if (dependency is NuGetReference)
                         {
                             NuGetPackageInfo nugetPackage = ((NuGetReference)dependency).NuGetPackage;
