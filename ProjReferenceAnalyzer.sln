@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.Console", "ProjReferenceAnalyzer.Console\ProjReferenceAnalyzer.Console.csproj", "{25910DBF-4A93-4283-ADA6-83A17A288FF3}"
 EndProject
@@ -16,6 +16,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjReferenceAnalyzer.SerializationFormat.Json", "ProjReferenceAnalyzer.SerializationFormat.Json\ProjReferenceAnalyzer.SerializationFormat.Json.csproj", "{4460DC7F-C3CF-45D0-B89A-EB2B1F617EB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjReferenceAnalyzer.SerializationFormat.Dot", "ProjReferenceAnalyzer.SerializationFormat.Dot\ProjReferenceAnalyzer.SerializationFormat.Dot.csproj", "{6F05098D-FE92-47A4-86EE-F83A510E818B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "visjsfrontend", "visjsfrontend", "{C8D7BCB3-3BF9-4889-9738-75C7D0F81D37}"
+	ProjectSection(SolutionItems) = preProject
+		visjsfrontend\frontend.html = visjsfrontend\frontend.html
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
