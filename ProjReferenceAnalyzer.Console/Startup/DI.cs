@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjReferenceAnalyzer.Core;
 using ProjReferenceAnalyzer.SerializationFormat;
+using ProjReferenceAnalyzer.SerializationFormat.Dot;
 using ProjReferenceAnalyzer.Services;
 using ProjReferenceAnalyzer.Storage;
 using System;
@@ -14,7 +15,16 @@ namespace ProjReferenceAnalyzer.Console.Startup
             var services = new ServiceCollection();
             services.AddSingleton<ISolutionFileParser, SolutionFileParser>();
             services.AddSingleton<IProjectFileParser, ProjectFileParser>();
-            services.AddSingleton<IGraphSerializationFormat, JsonFormat>();
+
+            if (args.OptJson)
+            {
+                services.AddSingleton<IGraphSerializationFormat, JsonFormat>();
+            }
+            else
+            {
+                services.AddSingleton<IGraphSerializationFormat, DotFormat>();
+            }
+            
             services.AddSingleton<IGraphStorage, LocalFileSystemStorage>();
 
             return services.BuildServiceProvider();
