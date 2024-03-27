@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace ProjReferenceAnalyzer.Services
@@ -10,6 +11,13 @@ namespace ProjReferenceAnalyzer.Services
     public class ProjectFileParser : IProjectFileParser
     {
         public const string OldStyleProjectXmlNamespace = @"http://schemas.microsoft.com/developer/msbuild/2003";
+        private const string GacReferenceIncludeRegexPattern = @"/(.+),\s?(Version=.+),\s?(Culture=.+),\s?(PublicKeyToken=\w+)";
+        private readonly Regex _gacReferenceIncludeRegex;
+
+        public ProjectFileParser() 
+        {
+            _gacReferenceIncludeRegex = new Regex(GacReferenceIncludeRegexPattern, RegexOptions.Compiled);
+        }
 
         public void FindDependenciesForProject(ProjectInfo project, IEnumerable<ProjectInfo> allProjects)
         {
@@ -54,8 +62,38 @@ namespace ProjReferenceAnalyzer.Services
             var projectXml = XDocument.Parse(projectContent);
             var packagesConfigXml = !string.IsNullOrWhiteSpace(packagesConfigContent) ? XDocument.Parse(packagesConfigContent) : null;
 
+            FindGacAndFileDependenciesForProject(project, projectXml);
             FindNuGetDependenciesForProject(project, projectXml, packagesConfigXml);
             FindProjectReferenceDependenciesForProject(project, allProjects, projectXml);
+        }
+
+        public void FindGacAndFileDependenciesForProject(ProjectInfo project, XDocument projectXml)
+        {
+            var references = projectXml.Descendants(XName.Get("Reference"));
+            foreach (var reference in references)
+            {
+                var includeAttribute = reference.Attribute(XName.Get("Include"));
+                var assemblyNameMatch = _gacReferenceIncludeRegex.Match(includeAttribute.Value);
+
+                if (assemblyNameMatch.Success)
+                {
+                    var hintPath = reference.Descendants(XName.Get("HintPath"))
+                        .Select(n => n.Value)
+                        .FirstOrDefault();
+
+                    if (!string.IsNullOrEmpty(hintPath))
+                    {
+                        project.ProjectFile?.Directory;
+                        var hintPathDirectory = new FileInfo(hintPath).Directory;
+                        hintPathDirectory.
+                    }
+
+                    project.Dependencies.Add(new GacReference
+                    {
+                        AssemblyName = assemblyNameMatch.Groups[0].Value
+                    });
+                }
+            }
         }
 
         public void FindProjectReferenceDependenciesForProject(ProjectInfo project, IEnumerable<ProjectInfo> allProjects, XDocument projectXml)
