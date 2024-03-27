@@ -9,7 +9,7 @@ namespace ProjReferenceAnalyzer.Console.Startup
 {
     internal class DI
     {
-        public static IServiceProvider ConfigureServices()
+        public static IServiceProvider ConfigureServices(MainArgs args)
         {
             var services = new ServiceCollection();
             services.AddSingleton<ISolutionFileParser, SolutionFileParser>();

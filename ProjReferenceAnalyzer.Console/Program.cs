@@ -5,6 +5,7 @@ using ProjReferenceAnalyzer.Services;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace ProjReferenceAnalyzer.Console
 {
@@ -13,7 +14,7 @@ namespace ProjReferenceAnalyzer.Console
         static void Main(string[] argv)
         {
             var args = new MainArgs(argv, exit: true);
-            var serviceProvider = DI.ConfigureServices();
+            var serviceProvider = DI.ConfigureServices(args);
 
             if (args.CmdFind)
             {
@@ -63,12 +64,66 @@ namespace ProjReferenceAnalyzer.Console
                         System.Console.WriteLine($"Found {projects.Sum(pi => pi.Dependencies.Count)} dependencies");
                         IGraphStorage graphStorage = serviceProvider.GetService<IGraphStorage>();
                         graphStorage.SerializationFormat = serviceProvider.GetService<IGraphSerializationFormat>();
-                        graphStorage.Store(@"C:\Rot\TestProjectAnalyzer.json", solutions);
+                        string outputFile = DecideOutputFile(args);
+                        graphStorage.Store(outputFile, solutions);
+                        System.Console.WriteLine($"Result written to {outputFile}");
                     }
                 }
             }
 
             System.Console.ReadKey();
+        }
+
+        private static string DecideOutputFile(MainArgs args)
+        {
+            FileInfo outputFile = null;
+
+            void CreateFileUnderWorkingDirectory()
+            {
+                outputFile = new FileInfo(Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, "output.json"));
+            }
+
+            if (!string.IsNullOrEmpty(args.ArgOutputPath))
+            {
+                try
+                {
+                    outputFile = new FileInfo(args.ArgOutputPath);
+                }
+                catch 
+                {
+                    try
+                    {
+                        var outputDir = new DirectoryInfo(args.ArgOutputPath);
+                        outputFile = new FileInfo(Path.Combine(outputDir.FullName, "output.json"));
+                    }
+                    catch 
+                    {
+                        CreateFileUnderWorkingDirectory();
+                    }
+                }
+            }
+            else
+            {
+                CreateFileUnderWorkingDirectory();
+            }
+
+            if (outputFile.Exists)
+            {
+                System.Console.WriteLine($"Overwrite {outputFile.FullName}? (Yes, No)");
+                var reply = System.Console.ReadKey(true);
+
+                if (reply.Key == System.ConsoleKey.Y)
+                {
+                    return outputFile.FullName;
+                }
+                else
+                {
+                    outputFile = new FileInfo(Path.Combine(outputFile.Directory.FullName, $"{System.Guid.NewGuid()}.json"));
+                    return outputFile.FullName;
+                }
+            }
+
+            return outputFile.FullName;
         }
 
         private static void RemoveDuplicateProjects(List<SolutionInfo> solutions)
